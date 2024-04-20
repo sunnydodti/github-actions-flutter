@@ -23,15 +23,10 @@ jobs:
       - run: cd flutter_app && flutter pub get
       - run: cd flutter_app && flutter test
       - run: cd flutter_app && flutter build apk --split-per-abi
-      - run: ls flutter_app/
-      - run: ls flutter_app/build/
-      - run: ls flutter_app/build/app/
-      - run: ls flutter_app/build/app/outputs/
-      - run: ls flutter_app/build/app/outputs/apk/
       - run: ls flutter_app/build/app/outputs/apk/release/
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
-          artifacts: '/flutter_app/build/app/outputs/apk/release/*.apk'
+          artifacts: /flutter_app/build/app/outputs/apk/release/*
           tag: v0.0.${{ github.run_number }}
           token: ${{ secrets.RELEASE_TOKEN }}
