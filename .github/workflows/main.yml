@@ -20,9 +20,9 @@ jobs:
           channel: stable
           flutter-version: 3.7.3
 
-      - run: flutter pub get
       - run: ls
       - run: cwd
+      - run: flutter pub get
       - run: flutter test
       - run: flutter build apk --split-per-abi
       - name: "Push to releases"
