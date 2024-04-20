@@ -19,18 +19,19 @@ jobs:
           channel: stable
           flutter-version: 3.7.3
 
-      - run: ls
       - run: cd 'flutter_app'
-      - run: ls
       - run: cd flutter_app && flutter pub get
-      - run: ls
       - run: cd flutter_app && flutter test
-      - run: ls
       - run: cd flutter_app && flutter build apk --split-per-abi
-      - run: ls
+      - run: ls flutter_app/
+      - run: ls flutter_app/build/
+      - run: ls flutter_app/build/app/
+      - run: ls flutter_app/build/app/outputs/
+      - run: ls flutter_app/build/app/outputs/apk/
+      - run: ls flutter_app/build/app/outputs/apk/release/
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
-          artifacts: '/flutter_app/build/app/outputs/release/*'
+          artifacts: '/flutter_app/build/app/outputs/apk/release/*.apk'
           tag: v0.0.${{ github.run_number }}
           token: ${{ secrets.RELEASE_TOKEN }}
