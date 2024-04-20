@@ -11,8 +11,6 @@ jobs:
 
       - name: 'Clone repository'
         uses: actions/checkout@v3
-        with:
-          path: 'github-actions-flutter/flutter_app'
 
       - name: 'Set up Flutter'
         uses: subosito/flutter-action@v2
@@ -22,6 +20,7 @@ jobs:
 
       - run: ls
       - run: cd 'github-actions-flutter/flutter_app'
+      - run: ls
       - run: flutter pub get
       - run: flutter test
       - run: flutter build apk --split-per-abi
