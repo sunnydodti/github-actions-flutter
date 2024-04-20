@@ -19,7 +19,7 @@ jobs:
           flutter-version: 3.7.3
 
       - run: ls
-      - run: cd 'github-actions-flutter/flutter_app'
+      - run: cd 'flutter_app'
       - run: ls
       - run: flutter pub get
       - run: flutter test
