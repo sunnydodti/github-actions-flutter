@@ -12,6 +12,7 @@ jobs:
       - name: 'Clone repository'
         uses: actions/checkout@v3
 
+
       - name: 'Set up Flutter'
         uses: subosito/flutter-action@v2
         with:
@@ -21,12 +22,15 @@ jobs:
       - run: ls
       - run: cd 'flutter_app'
       - run: ls
-      - run: flutter pub get
-      - run: flutter test
-      - run: flutter build apk --split-per-abi
+      - run: cd flutter_app && flutter pub get
+      - run: ls
+      - run: cd flutter_app && flutter test
+      - run: ls
+      - run: cd flutter_app && flutter build apk --split-per-abi
+      - run: ls
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
-          artifacts: '/build/app/outputs/release/*.apk'
+          artifacts: '/flutter_app/build/app/outputs/release/*.apk'
           tag: v0.0.${{ github.run_number }}
           token: ${{ secrets.RELEASE_TOKEN }}
