@@ -30,7 +30,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: ../../flutter_app/pubspec.yaml 
+          flutter-version-file: flutter_app/pubspec.yaml 
 
       - run: cd 'flutter_app'
       - run: cd flutter_app && flutter pub get
