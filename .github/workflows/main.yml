@@ -33,7 +33,7 @@ jobs:
       - run: cd flutter_app && flutter build apk --split-per-abi
       - run: ls flutter_app/build/app/outputs/apk/release/*.apk
 
-      - name: "Create Tag"
+      - name: "create_tag"
         uses: Klemensas/action-autotag@stable
         with: 
           package_root: flutter_app
@@ -45,7 +45,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with: 
           artifacts: flutter_app/build/app/outputs/apk/release/*.apk
-          tag: ${{ tagname }}
+          tag: ${{ steps.create_tag.outputs.tagname }}
           token: ${{ secrets.RELEASE_TOKEN }}
           
   # build_ios: 
