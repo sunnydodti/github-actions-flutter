@@ -29,12 +29,12 @@ jobs:
       # - run: ls flutter_app/build/app/outputs/apk/release/*.apk
 
       - name: "create_tag"
-      -  uses: actions/checkout@v2
-      -  uses: Klemensas/action-autotag@stable
-          with: 
-            package_root: flutter_app
-            tag_prefix: "v"
-            tag_suffix: "alpha"
+      - uses: actions/checkout@v2
+      - uses: Klemensas/action-autotag@stable
+        with: 
+          package_root: flutter_app
+          tag_prefix: "v"
+          tag_suffix: "alpha"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
