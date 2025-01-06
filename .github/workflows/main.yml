@@ -9,16 +9,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 'Print Current Directory'
+        run: |
+          pwd 
+          echo "------------------"
 
       - name: 'Clone repository'
         uses: actions/checkout@v3
-
 
       - name: 'Set up Flutter'
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.7.3
+          flutter-version-file: ../../flutter_app/pubspec.yaml 
 
       - run: cd 'flutter_app'
       - run: cd flutter_app && flutter pub get
@@ -28,7 +31,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with: 
           artifacts: flutter_app/build/app/outputs/apk/release/*.apk
-          tag: v0.0.${{ github.run_number }}-aplha
+          tag: v0.1.1-aplha
           token: ${{ secrets.RELEASE_TOKEN }}
           
   build_ios: 
