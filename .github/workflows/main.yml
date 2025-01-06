@@ -16,10 +16,6 @@ jobs:
         run: |
           pwd 
           echo "------------------"
-      - name: 'list files'
-        run: |
-          ls 
-          echo "------------------"
       
       - name: 'list tree'
         run: |
@@ -36,11 +32,20 @@ jobs:
       - run: cd flutter_app && flutter pub get
       - run: cd flutter_app && flutter build apk --split-per-abi
       - run: ls flutter_app/build/app/outputs/apk/release/*.apk
+
+      - name: "Create Tag"
+        uses: Klemensas/action-autotag@stable
+        with: 
+          package_root: flutter_app
+          GITHUB_TOKEN: "${{ secrets.RELEASE_TOKEN }}"
+          tag_prefix: "v"
+          tag_suffix: "alpha"
+
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
           artifacts: flutter_app/build/app/outputs/apk/release/*.apk
-          tag: v0.1.1-aplha
+          tag: ${{ tagname }}
           token: ${{ secrets.RELEASE_TOKEN }}
           
   # build_ios: 
