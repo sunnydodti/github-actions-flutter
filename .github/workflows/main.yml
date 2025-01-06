@@ -11,11 +11,6 @@ jobs:
     steps:
       - name: 'Clone repository'
         uses: actions/checkout@v3
-
-      - name: 'Print Current Directory'
-        run: |
-          pwd 
-          echo "------------------"
       
       - name: 'list tree'
         run: |
@@ -34,11 +29,12 @@ jobs:
       # - run: ls flutter_app/build/app/outputs/apk/release/*.apk
 
       - name: "create_tag"
-        uses: Klemensas/action-autotag@stable
-        with: 
-          package_root: flutter_app
-          tag_prefix: "v"
-          tag_suffix: "alpha"
+      -  uses: actions/checkout@v2
+      -  uses: Klemensas/action-autotag@stable
+          with: 
+            package_root: flutter_app
+            tag_prefix: "v"
+            tag_suffix: "alpha"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
