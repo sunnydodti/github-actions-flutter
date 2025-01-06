@@ -37,7 +37,6 @@ jobs:
         uses: Klemensas/action-autotag@stable
         with: 
           package_root: flutter_app
-          GITHUB_TOKEN: "${{ secrets.RELEASE_TOKEN }}"
           tag_prefix: "v"
           tag_suffix: "alpha"
 
