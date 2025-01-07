@@ -92,7 +92,7 @@ jobs:
       package-name: ${{ steps.get_package.outputs.pkg_name }}
       app-version: ${{ steps.get_version.outputs.version_number }}
       package-name-build: "${{ steps.get_package.outputs.pkg_name }}.${{ github.ref_name }}"
-      app-version-build: "${{ steps.get_version.outputs.version_number }}+${{needs.update-build-info.outputs.build-number}}-${{ github.ref_name }}"
+      app-version-build: "${{ steps.get_version.outputs.version_number }}-${{ github.ref_name }}+${{needs.update-build-info.outputs.build-number}}"
 
     steps:
       - name: 'Clone repository'
