@@ -73,10 +73,10 @@ jobs:
           NEW_VERSION="${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
 
           # Update AndroidManifest.xml
-          sed -i "s/package=\"${{ needs.set-package-and-version.outputs.package-name }}\"/package=\"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
 
           # Update build.gradle
-          sed -i "s/applicationId \"${{ needs.set-package-and-version.outputs.package-name }}\"/applicationId \"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
 
           # Update pubspec.yaml
           yq ".version = \"$NEW_VERSION\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
@@ -84,7 +84,14 @@ jobs:
       - run: cd flutter_app && flutter pub get
       - run: cd flutter_app && flutter build apk --split-per-abi
       - run: ls flutter_app/build/app/outputs/apk/release/*.apk
-
+      - name: Rename Outputs
+        run: |
+          NEW_PACKAGE_NAME="${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }}"
+          NEW_VERSION="${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
+          FILE_NAME = "${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }} ${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
+          mv flutter_app/build/app/outputs/apk/release/app-arm64-v8a-release.apk "flutter_app/build/app/outputs/apk/release/$FILE_NAME app-arm64-v8a-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-armeabi-v7a-release.apk "flutter_app/build/app/outputs/apk/release/$FILE_NAME app-armeabi-v7a-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-x86_64-release.apk "flutter_app/build/app/outputs/apk/release/$FILE_NAME app-x86_64-release.apk"
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
