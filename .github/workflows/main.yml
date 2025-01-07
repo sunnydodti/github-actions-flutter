@@ -28,6 +28,7 @@ jobs:
           repository: sunnydodti/build-info
           # token: ${{ secrets.RELEASE_TOKEN }} # `GH_PAT` is a secret that contains your PAT
           path: build-info
+          ref: main
       
       - name: 'list tree'
         run: |
