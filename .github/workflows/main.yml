@@ -64,8 +64,8 @@ jobs:
         run: |
           echo "== build details =="
           echo "build: ${{ github.ref_name }}"
-          echo "package: ${{ needs.set-package-and-version.outputs.package-name }}.${{ github.ref_name }}"
-          echo "version: ${{ needs.set-package-and-version.outputs.app-version }}-${{ github.ref_name }}"
+          echo "package: ${{ needs.set-package-and-version.outputs.package-name-build }}"
+          echo "version: ${{ needs.set-package-and-version.outputs.app-version-build }}"
       
       - name: "Modify Package Name and Version"
         if: ${{ github.ref_name }} == 'alpha' || ${{ github.ref_name }} == 'beta'
@@ -97,7 +97,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with: 
           artifacts: flutter_app/build/app/outputs/apk/release/*.apk
-          tag: "v${{ needs.set-package-and-version.outputs.app-version-build }}-"
+          tag: "v${{ needs.set-package-and-version.outputs.app-version-build }}"
           token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: ${{ github.ref_name == 'alpha' || github.ref_name == 'beta'}} 
 
