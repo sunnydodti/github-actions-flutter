@@ -22,13 +22,13 @@ jobs:
         id: get_package
         run: |
           OLD_PACKAGE_NAME=$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)
-          echo "pkg_name=OLD_PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "pkg_name=$OLD_PACKAGE_NAME" >> $GITHUB_OUTPUT
       
       - name: 'Read Version'
         id: get_version
         run: |
           OLD_VERSION=$(yq -r '.version' 'flutter_app/pubspec.yaml')
-          echo "version_number=OLD_VERSION" >> $GITHUB_OUTPUT
+          echo "version_number=$OLD_VERSION" >> $GITHUB_OUTPUT
 
   build-android:
     runs-on: ubuntu-latest
