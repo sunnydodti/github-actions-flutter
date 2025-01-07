@@ -16,12 +16,8 @@ jobs:
       build-version: ${{ steps.update-build-info.outputs.build_ersion }}
 
     steps:
-      # Checkout current repository
-      - name: Checkout current repo
-        uses: actions/checkout@v3
-
       # Checkout the other repository
-      - name: Checkout other repo
+      - name: Checkout build-info repo
         uses: actions/checkout@v3
         with:
           repository: sunnydodti/build-info
@@ -82,7 +78,7 @@ jobs:
       # Commit changes to the other repository
       - name: Commit and Push Changes
         run: |
-          cd other-repo
+          cd build-info
           git config --local user.email "github-actions_build-info-pat@users.noreply.github.com"
           git config --local user.name "GitHub Actions"
           git add .
