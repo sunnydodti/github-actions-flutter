@@ -28,7 +28,7 @@ jobs:
       - name: Update Build Info
         id: update-build-info
         run: |
-          REPO_PATH="build-info/${{ env.APP_NAME }}"
+          REPO_PATH="build-info/${{ vars.APP_NAME }}"
           BUILD_DATE_FILE="$REPO_PATH/date.txt"
           BUILD_NUMBER_FILE="$REPO_PATH/number.txt"
           BUILD_VERSION_FILE="$REPO_PATH/version.txt"
