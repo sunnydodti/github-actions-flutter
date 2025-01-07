@@ -31,7 +31,6 @@ jobs:
       - name: "create_tag"
         uses: jacopocarlini/action-autotag@stable
         with: 
-          package_root: flutter_app
           tag_prefix: "v"
           tag_suffix: "alpha"
         env:
