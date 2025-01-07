@@ -75,6 +75,9 @@ jobs:
           # Update AndroidManifest.xml
           sed -i "s/package=\"${{ needs.set-package-and-version.outputs.package-name }}\"/package=\"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
 
+          # Update build.gradle
+          sed -i "s/applicationId \"${{ needs.set-package-and-version.outputs.package-name }}\"/applicationId \"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
+
           # Update pubspec.yaml
           yq ".version = \"$NEW_VERSION\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
 
