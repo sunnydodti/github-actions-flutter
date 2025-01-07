@@ -21,7 +21,18 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
+
+      - name: 'Checkout build-info repo'
+        uses: actions/checkout@v4
+        with:
+          repository: sunnydodti/build-info
+          # token: ${{ secrets.RELEASE_TOKEN }} # `GH_PAT` is a secret that contains your PAT
+          path: build-info
       
+      - name: 'list tree'
+        run: |
+          tree 
+
       - name: 'Get Package Name'
         id: get_package
         run: |
