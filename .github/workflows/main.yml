@@ -31,12 +31,12 @@ jobs:
       - name: "create_tag"
         uses: jacopocarlini/action-autotag@stable
         with: 
-          package_root: flutter_app/
+          package_root: flutter_app
           tag_prefix: "v"
           tag_suffix: "alpha"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: "Print Tag Output"
         run: |
           echo "Tag Name: ${{ steps.create_tag.outputs.tagname }}"
