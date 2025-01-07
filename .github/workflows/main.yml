@@ -7,8 +7,32 @@ on:
       - alpha
 
 jobs:
+
+  set-package-and-version:
+    runs-on: ubuntu-latest
+    outputs:
+      package-name: ${{steps.get_package.outputs.pkg_name}}
+      app-version: ${{steps.get_version.outputs.version_number}}
+
+    steps:
+      - name: 'Clone repository'
+        uses: actions/checkout@v3
+      
+      - name: 'Get Package Name'
+        id: get_package
+        run: |
+          OLD_PACKAGE_NAME=$(grep -o 'package="[^"]*"' android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)
+          echo "pkg_name=OLD_PACKAGE_NAME" >> $GITHUB_OUTPUT
+      
+      - name: 'Read Version'
+        id: get_version
+        run: |
+          OLD_VERSION=$(yq r '.version' pubspec.yaml)
+          echo "version_number=OLD_VERSION" >> $GITHUB_OUTPUT
+
   build-android:
     runs-on: ubuntu-latest
+    needs: set-package-and-version
 
     steps:
       - name: 'Clone repository'
@@ -27,16 +51,11 @@ jobs:
         #     flutter-version-file: flutter_app/pubspec.yaml 
       - run: cd 'flutter_app'
         
-      - name: 'Read Existing Package Name'
+      - name: Echo output
         run: |
-          OLD_PACKAGE_NAME=$(grep -o 'package="[^"]*"' android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)
-          echo "::set-env name=OLD_PACKAGE_NAME::${OLD_PACKAGE_NAME}"
-
-      - name: 'Read Existing Version'
-        run: |
-          OLD_VERSION=$(yq r '.version' pubspec.yaml)
-          echo "::set-env name=OLD_VERSION::${OLD_VERSION}"
-
+          echo "== output =="
+          echo "${{needs.set-package-and-version.outputs.package-name}}"
+          echo "${{needs.set-package-and-version.outputs.app-version}}"
       # - run: cd 'flutter_app'
       # - run: cd flutter_app && flutter pub get
       # - run: cd flutter_app && flutter build apk --split-per-abi
