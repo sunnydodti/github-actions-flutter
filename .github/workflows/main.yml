@@ -28,13 +28,13 @@ jobs:
       # - run: cd flutter_app && flutter build apk --split-per-abi
       # - run: ls flutter_app/build/app/outputs/apk/release/*.apk
 
-      - name: "create_tag"
-        uses: jacopocarlini/action-autotag@stable
-        with: 
-          tag_prefix: "v"
-          tag_suffix: "alpha"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: "create_tag"
+      #   uses: jacopocarlini/action-autotag@stable
+      #   with: 
+      #     tag_prefix: "v"
+      #     tag_suffix: "alpha"
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: "Print Tag Output"
       #   run: |
