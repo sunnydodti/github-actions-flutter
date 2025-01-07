@@ -79,7 +79,7 @@ jobs:
           # Update debug/AndroidManifest.xml
           sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/debug/AndroidManifest.xml
           # Update MainActivity.kt
-          sed -i 's/"${{ needs.set-package-and-version.outputs.package-name }}/${{ needs.set-package-and-version.outputs.package-name-build }}/g' flutter_app/android/app/src/main/kotlin/com/example/flutter_app/MainActivity.kt
+          sed -i 's/${{ needs.set-package-and-version.outputs.package-name }}/${{ needs.set-package-and-version.outputs.package-name-build }}/g' flutter_app/android/app/src/main/kotlin/com/example/flutter_app/MainActivity.kt
 
           # Update pubspec.yaml
           yq ".version = \"${{ needs.set-package-and-version.outputs.app-version-build }}\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
