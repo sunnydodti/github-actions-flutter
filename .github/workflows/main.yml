@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: 'Clone repository'
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
       
       - name: 'Get Package Name'
         id: get_package
@@ -31,7 +33,7 @@ jobs:
           echo "version_number=$OLD_VERSION" >> $GITHUB_OUTPUT
       - name: Extract branch name
         shell: bash
-        run: echo $${{ github.ref_name }}
+        run: echo ${{ github.ref_name }}
         id: extract_branch
 
   build-android:
@@ -41,6 +43,8 @@ jobs:
     steps:
       - name: 'Clone repository'
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
       
       # - name: 'list tree'
       #   run: |
