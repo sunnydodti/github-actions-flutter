@@ -36,6 +36,14 @@ jobs:
           tag_suffix: "alpha"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: "Print Tag Output"
+        run: |
+          echo "Tag Name: ${{ steps.create_tag.outputs.tagname }}"
+          echo "Tag SHA: ${{ steps.create_tag.outputs.tagsha }}"
+          echo "Tag URI: ${{ steps.create_tag.outputs.taguri }}"
+          echo "Tag Message: ${{ steps.create_tag.outputs.tagmessage }}"
+          echo "Version: ${{ steps.create_tag.outputs.version }}"
 
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
