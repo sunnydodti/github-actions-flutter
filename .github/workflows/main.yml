@@ -36,13 +36,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Print Tag Output"
-        run: |
-          echo "Tag Name: ${{ steps.create_tag.outputs.tagname }}"
-          echo "Tag SHA: ${{ steps.create_tag.outputs.tagsha }}"
-          echo "Tag URI: ${{ steps.create_tag.outputs.taguri }}"
-          echo "Tag Message: ${{ steps.create_tag.outputs.tagmessage }}"
-          echo "Version: ${{ steps.create_tag.outputs.version }}"
+      # - name: "Print Tag Output"
+      #   run: |
+      #     echo "Tag Name: ${{ steps.create_tag.outputs.tagname }}"
+      #     echo "Tag SHA: ${{ steps.create_tag.outputs.tagsha }}"
+      #     echo "Tag URI: ${{ steps.create_tag.outputs.taguri }}"
+      #     echo "Tag Message: ${{ steps.create_tag.outputs.tagmessage }}"
+      #     echo "Version: ${{ steps.create_tag.outputs.version }}"
+
+      - name: Get version
+        id: yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -r '.version' 'flutter_app/pubspec.yaml'
+
+      - name: Print version
+        run: echo ${{ steps.yq.outputs.result }}
 
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
