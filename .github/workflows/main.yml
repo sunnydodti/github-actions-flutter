@@ -53,7 +53,6 @@ jobs:
         run: |
           tree 
           echo "------------------"
-
       
       - name: 'Set up Flutter'
         uses: subosito/flutter-action@v2
@@ -68,14 +67,20 @@ jobs:
           echo "package: ${{ needs.set-package-and-version.outputs.package-name }}.${{ github.ref_name }}"
           echo "version: ${{ needs.set-package-and-version.outputs.app-version }}-${{ github.ref_name }}"
       
-      - name: "Modify Package Name"
+      - name: "Modify Package Name and Version"
         if: ${{ github.ref_name }} == 'alpha' || ${{ github.ref_name }} == 'beta'
         run: |
-          # Update AndroidManifest.xml
-          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
-
           # Update build.gradle
           sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/build.gradle
+          
+          # Update main/AndroidManifest.xml
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
+          # Update profile/AndroidManifest.xml
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/profile/AndroidManifest.xml
+          # Update debug/AndroidManifest.xml
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/debug/AndroidManifest.xml
+          # Update MainActivity.kt
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/main/kotlin/com/example/flutter_app/MainActivity.kt
 
           # Update pubspec.yaml
           yq ".version = \"${{ needs.set-package-and-version.outputs.app-version-build }}\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
