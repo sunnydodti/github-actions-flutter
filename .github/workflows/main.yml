@@ -19,23 +19,23 @@ jobs:
       #     tree 
       #     echo "------------------"
 
-      - run: cd 'flutter_app'
-
-      - name: 'Set up Flutter'
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version-file: flutter_app/pubspec.yaml 
       
+      # - name: 'Set up Flutter'
+      #   uses: subosito/flutter-action@v2
+      #   with:
+        #     channel: stable
+        #     flutter-version-file: flutter_app/pubspec.yaml 
+      - run: cd 'flutter_app'
+        
       - name: 'Read Existing Package Name'
-        id: read_package_name
         run: |
-          echo "::set-output name=old_package_name::$(grep -o 'package="[^"]*"' android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)"
+          OLD_PACKAGE_NAME=$(grep -o 'package="[^"]*"' android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)
+          echo "::set-env name=OLD_PACKAGE_NAME::${OLD_PACKAGE_NAME}"
 
       - name: 'Read Existing Version'
-        id: read_version
         run: |
-          echo "::set-output name=old_version::$(yq r '.version' pubspec.yaml)"
+          OLD_VERSION=$(yq r '.version' pubspec.yaml)
+          echo "::set-env name=OLD_VERSION::${OLD_VERSION}"
 
       # - run: cd 'flutter_app'
       # - run: cd flutter_app && flutter pub get
