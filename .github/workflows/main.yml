@@ -47,18 +47,17 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       
-      # - name: 'list tree'
-      #   run: |
-      #     tree 
-      #     echo "------------------"
+      - name: 'list tree'
+        run: |
+          tree 
+          echo "------------------"
 
       
-      # - name: 'Set up Flutter'
-      #   uses: subosito/flutter-action@v2
-      #   with:
-        #     channel: stable
-        #     flutter-version-file: flutter_app/pubspec.yaml 
-      - run: cd 'flutter_app'
+      - name: 'Set up Flutter'
+        uses: subosito/flutter-action@v2
+        with:
+            channel: stable
+            flutter-version-file: flutter_app/pubspec.yaml 
         
       - name: Build Details
         run: |
