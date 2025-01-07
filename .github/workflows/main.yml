@@ -51,6 +51,13 @@ jobs:
         run: |
           tree 
           echo "------------------"
+
+      
+      - name: 'Set up Flutter'
+        uses: subosito/flutter-action@v2
+        with:
+            channel: stable
+            flutter-version-file: flutter_app/pubspec.yaml 
         
       - name: Build Details
         run: |
@@ -64,24 +71,15 @@ jobs:
         run: |
           NEW_PACKAGE_NAME="${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }}"
           NEW_VERSION="${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
-          
-          echo "$NEW_PACKAGE_NAME"
-          echo "$NEW_VERSION"
+
           # Update AndroidManifest.xml
-          COMMAND = "sed -i \"s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"$NEW_PACKAGE_NAME}\"/g\" flutter_app/android/app/src/main/AndroidManifest.xml"
-          echo COMMAND
-          eval $Command
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }}\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
+
           # Update build.gradle
-          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"$NEW_PACKAGE_NAME\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
+          sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }}\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
 
           # Update pubspec.yaml
-          yq ".version = \"$NEW_VERSION\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
-
-      - name: 'Set up Flutter'
-        uses: subosito/flutter-action@v2
-        with:
-            channel: stable
-            flutter-version-file: flutter_app/pubspec.yaml 
+          yq ".version = \"${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
 
       - run: cd flutter_app && flutter pub get
       - run: cd flutter_app && flutter build apk --split-per-abi
@@ -90,10 +88,10 @@ jobs:
         run: |
           NEW_PACKAGE_NAME="${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }}"
           NEW_VERSION="${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
-          FILE_NAME = "${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }} ${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
-          mv flutter_app/build/app/outputs/apk/release/app-arm64-v8a-release.apk "flutter_app/build/app/outputs/apk/release/$FILE_NAME app-arm64-v8a-release.apk"
-          mv flutter_app/build/app/outputs/apk/release/app-armeabi-v7a-release.apk "flutter_app/build/app/outputs/apk/release/$FILE_NAME app-armeabi-v7a-release.apk"
-          mv flutter_app/build/app/outputs/apk/release/app-x86_64-release.apk "flutter_app/build/app/outputs/apk/release/$FILE_NAME app-x86_64-release.apk"
+          FILE_NAME="${{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }} ${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }}"
+          mv flutter_app/build/app/outputs/apk/release/app-arm64-v8a-release.apk "flutter_app/build/app/outputs/apk/release/{{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }} ${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }} app-arm64-v8a-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-armeabi-v7a-release.apk "flutter_app/build/app/outputs/apk/release/{{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }} ${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }} app-armeabi-v7a-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-x86_64-release.apk "flutter_app/build/app/outputs/apk/release/{{needs.set-package-and-version.outputs.package-name}}.${{ github.ref_name }} ${{needs.set-package-and-version.outputs.app-version}}-${{ github.ref_name }} app-x86_64-release.apk"
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
