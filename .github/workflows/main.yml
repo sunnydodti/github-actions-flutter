@@ -8,6 +8,87 @@ on:
 
 jobs:
 
+  update-build-info:
+    runs-on: ubuntu-latest
+    outputs:
+      build-date: ${{ steps.update-build-info.outputs.build_date }}
+      build-number: ${{ steps.update-build-info.outputs.build_number }}
+      build-version: ${{ steps.update-build-info.outputs.build_ersion }}
+
+    steps:
+      # Checkout current repository
+      - name: Checkout current repo
+        uses: actions/checkout@v3
+
+      # Checkout the other repository
+      - name: Checkout other repo
+        uses: actions/checkout@v3
+        with:
+          repository: sunnydodti/build-info
+          token: ${{ secrets.BUILD_INFO_TOKEN }}
+          path: build-info
+
+      # Increment Build Information
+      - name: Update Build Info
+        id: update-build-info
+        run: |
+          REPO_PATH="build-info/${{ env.APP_NAME }}"
+          BUILD_DATE_FILE="$REPO_PATH/date.txt"
+          BUILD_NUMBER_FILE="$REPO_PATH/number.txt"
+          BUILD_VERSION_FILE="$REPO_PATH/version.txt"
+
+          # Get today's date
+          TODAY=$(date +'%Y-%m-%d')
+
+          # Update date.txt
+          if [[ -f "$BUILD_DATE_FILE" ]]; then
+            BUILD_DATE=$(cat "$BUILD_DATE_FILE")
+          else
+            BUILD_DATE=""
+          fi
+          if [[ -z "$BUILD_DATE" || "$BUILD_DATE" != "$TODAY" ]]; then
+            echo "$TODAY" > "$BUILD_DATE_FILE"
+          fi
+
+          # Update number.txt
+          if [[ -f "$BUILD_NUMBER_FILE" ]]; then
+            BUILD_NUMBER=$(cat "$BUILD_NUMBER_FILE")
+          else
+            BUILD_NUMBER=""
+          fi
+          if [[ -z "$BUILD_NUMBER" || "$BUILD_DATE" != "$TODAY" ]]; then
+            BUILD_NUMBER=1
+          else
+            BUILD_NUMBER=$((BUILD_NUMBER + 1))
+          fi
+          echo "$BUILD_NUMBER" > "$BUILD_NUMBER_FILE"
+
+          # Update version.txt (increment minor version)
+          if [[ -f "$BUILD_VERSION_FILE" ]]; then
+            BUILD_VERSION=$(cat "$BUILD_VERSION_FILE")
+          else
+            BUILD_VERSION="0.0.0"
+          fi
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BUILD_VERSION"
+          MINOR=$((MINOR + 1))
+          BUILD_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "$BUILD_VERSION" > "$BUILD_VERSION_FILE"
+
+          # Set outputs
+          echo "build_date=$(cat $BUILD_DATE_FILE)" >> $GITHUB_OUTPUT
+          echo "build_number=$(cat $BUILD_NUMBER_FILE)" >> $GITHUB_OUTPUT
+          echo "build_version=$(cat $BUILD_VERSION_FILE)" >> $GITHUB_OUTPUT
+
+      # Commit changes to the other repository
+      - name: Commit and Push Changes
+        run: |
+          cd other-repo
+          git config --local user.email "github-actions_build-info-pat@users.noreply.github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Update build info: $(date)"
+          git push
+
   set-package-and-version:
     runs-on: ubuntu-latest
     outputs:
@@ -53,7 +134,7 @@ jobs:
 
   build-android:
     runs-on: ubuntu-latest
-    needs: set-package-and-version
+    needs: [set-package-and-version, update-build-info]
 
     steps:
       - name: 'Clone repository'
@@ -78,6 +159,9 @@ jobs:
           echo "build: ${{ github.ref_name }}"
           echo "package: ${{ needs.set-package-and-version.outputs.package-name-build }}"
           echo "version: ${{ needs.set-package-and-version.outputs.app-version-build }}"
+          echo "build-date: ${{ needs.update-build-info.outputs.build-date }}"
+          echo "build-number: ${{ needs.update-build-info.outputs.build-number }}"
+          echo "build-version: ${{ needs.update-build-info.outputs.build-version }}"
       
       - name: "Modify Package Name and Version"
         if: ${{ github.ref_name }} == 'alpha' || ${{ github.ref_name }} == 'beta'
