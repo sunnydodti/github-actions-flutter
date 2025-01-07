@@ -57,7 +57,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with: 
           # artifacts: flutter_app/build/app/outputs/apk/release/*.apk
-          tag: ${{ steps.yq.outputs.result }}
+          tag: "v${{ steps.yq.outputs.result }}"
           token: ${{ secrets.RELEASE_TOKEN }}
           
   # build_ios: 
