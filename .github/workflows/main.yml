@@ -186,14 +186,14 @@ jobs:
       - run: ls flutter_app/build/app/outputs/apk/release/*.apk
       - name: Rename Outputs
         run: |
-          mv flutter_app/build/app/outputs/apk/release/app-arm64-v8a-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name}}_${{ needs.set-package-and-version.outputs.app-version-build }}_arm64-v8a-release.apk"
-          mv flutter_app/build/app/outputs/apk/release/app-armeabi-v7a-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name }}_${{ needs.set-package-and-version.outputs.app-version-build }}_armeabi-v7a-release.apk"
-          mv flutter_app/build/app/outputs/apk/release/app-x86_64-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name }}_${{ needs.set-package-and-version.outputs.app-version-build }}_x86_64-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-arm64-v8a-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name}}-${{ needs.set-package-and-version.outputs.app-version-build }}_arm64-v8a-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-armeabi-v7a-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name }}-${{ needs.set-package-and-version.outputs.app-version-build }}_armeabi-v7a-release.apk"
+          mv flutter_app/build/app/outputs/apk/release/app-x86_64-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name }}-${{ needs.set-package-and-version.outputs.app-version-build }}_x86_64-release.apk"
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
         with: 
           artifacts: flutter_app/build/app/outputs/apk/release/*.apk
-          tag: "v${{ needs.set-package-and-version.outputs.app-version-build }}+${{needs.update-build-info.outputs.build-number}}-${{ github.run_number }}"
+          tag: "v${{ needs.set-package-and-version.outputs.app-version-build }}"
           token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: ${{ github.ref_name == 'alpha' || github.ref_name == 'beta'}} 
 
