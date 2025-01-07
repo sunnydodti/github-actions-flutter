@@ -72,7 +72,6 @@ jobs:
         run: |
           # Update build.gradle
           sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/build.gradle
-          
           # Update main/AndroidManifest.xml
           sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/src/main/AndroidManifest.xml
           # Update profile/AndroidManifest.xml
@@ -84,6 +83,15 @@ jobs:
 
           # Update pubspec.yaml
           yq ".version = \"${{ needs.set-package-and-version.outputs.app-version-build }}\"" flutter_app/pubspec.yaml > temp.yaml && mv temp.yaml flutter_app/pubspec.yaml
+
+      - name: "Check for Changes"
+        run: |
+          git diff --exit-code flutter_app/android/app/build.gradle || echo "build.gradle not updated"
+          git diff --exit-code flutter_app/android/app/src/main/AndroidManifest.xml || echo "main/AndroidManifest.xml not updated"
+          git diff --exit-code flutter_app/android/app/src/profile/AndroidManifest.xml || echo "profile/AndroidManifest.xml not updated"
+          git diff --exit-code flutter_app/android/app/src/debug/AndroidManifest.xml || echo "debug/AndroidManifest.xml not updated"
+          git diff --exit-code flutter_app/android/app/src/main/kotlin/com/example/flutter_app/MainActivity.kt || echo "MainActivity.kt not updated"
+          git diff --exit-code flutter_app/pubspec.yml || echo "MainActivity.kt not updated"
 
       - run: cd flutter_app && flutter pub get
       - run: cd flutter_app && flutter build apk --split-per-abi
