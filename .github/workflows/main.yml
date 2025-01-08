@@ -1,4 +1,4 @@
-name: 'Flutter CI'
+name: "Flutter CI"
 on:
   push:
     branches:
@@ -7,7 +7,6 @@ on:
       - alpha
 
 jobs:
-
   update-build-info:
     runs-on: ubuntu-latest
     outputs:
@@ -95,35 +94,35 @@ jobs:
       app-version-build: "${{ steps.get_version.outputs.version_number }}-${{ github.ref_name }}+${{needs.update-build-info.outputs.build-number}}"
 
     steps:
-      - name: 'Clone repository'
+      - name: "Clone repository"
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
 
-      - name: 'Checkout build-info repo'
+      - name: "Checkout build-info repo"
         uses: actions/checkout@v4
         with:
           repository: sunnydodti/build-info
           token: ${{ secrets.BUILD_INFO_TOKEN }} # `GH_PAT` is a secret that contains your PAT
           path: build-info
           ref: main
-      
-      - name: 'list tree'
-        run: |
-          tree 
 
-      - name: 'Get Package Name'
+      - name: "list tree"
+        run: |
+          tree
+
+      - name: "Get Package Name"
         id: get_package
         run: |
           OLD_PACKAGE_NAME=$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)
           echo "pkg_name=$OLD_PACKAGE_NAME" >> $GITHUB_OUTPUT
-      
-      - name: 'Read Version'
+
+      - name: "Read Version"
         id: get_version
         run: |
           OLD_VERSION=$(yq -r '.version' 'flutter_app/pubspec.yaml')
           echo "version_number=$OLD_VERSION" >> $GITHUB_OUTPUT
-          
+
       - name: Extract branch name
         shell: bash
         run: echo ${{ github.ref_name }}
@@ -134,17 +133,17 @@ jobs:
     needs: [set-package-and-version, update-build-info]
 
     steps:
-      - name: 'Clone repository'
+      - name: "Clone repository"
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
-      
-      - name: 'Set up Flutter'
+
+      - name: "Set up Flutter"
         uses: subosito/flutter-action@v2
         with:
-            channel: stable
-            flutter-version-file: flutter_app/pubspec.yaml 
-        
+          channel: stable
+          flutter-version-file: flutter_app/pubspec.yaml
+
       - name: Build Details
         run: |
           echo "== build details =="
@@ -154,9 +153,9 @@ jobs:
           echo "build-date: ${{ needs.update-build-info.outputs.build-date }}"
           echo "build-number: ${{ needs.update-build-info.outputs.build-number }}"
           echo "build-version: ${{ needs.update-build-info.outputs.build-version }}"
-      
+
       - name: "Modify Package Name and Version"
-        if: ${{ github.ref_name }} == 'alpha' || ${{ github.ref_name }} == 'beta'
+        if: ${{ github.ref_name == 'alpha' || github.ref_name == 'beta' }}
         run: |
           # Update build.gradle
           sed -i "s/\"${{ needs.set-package-and-version.outputs.package-name }}\"/\"${{ needs.set-package-and-version.outputs.package-name-build }}\"/g" flutter_app/android/app/build.gradle
@@ -191,22 +190,21 @@ jobs:
           mv flutter_app/build/app/outputs/apk/release/app-x86_64-release.apk "flutter_app/build/app/outputs/apk/release/${{ needs.set-package-and-version.outputs.package-name }}-${{ needs.set-package-and-version.outputs.app-version-build }}_x86_64-release.apk"
       - name: "Push to releases"
         uses: ncipollo/release-action@v1
-        with: 
+        with:
           artifacts: flutter_app/build/app/outputs/apk/release/*.apk
           tag: "v${{ needs.set-package-and-version.outputs.app-version-build }}"
           token: ${{ secrets.RELEASE_TOKEN }}
-          prerelease: ${{ github.ref_name == 'alpha' || github.ref_name == 'beta'}} 
+          prerelease: ${{ github.ref_name == 'alpha' || github.ref_name == 'beta'}}
 
-          
-  # build_ios: 
+  # build_ios:
   #   runs-on: macos-latest
   #   permissions:
-  #     contents: read 
+  #     contents: read
   #   steps:
   #     - uses: actions/checkout@v3
 
   #     - name: 'Set up Xcode'
-  #       uses: actions/checkout@v3 
+  #       uses: actions/checkout@v3
   #       with:
   #         repository: 'apple/developer-tools'
   #         path: '/usr/local/tools'
@@ -216,10 +214,10 @@ jobs:
   #       run: cd expense_tracker && flutter pub get
 
   #     - name: 'Build iOS App'
-  #       run: cd expense_tracker && flutter build ios 
+  #       run: cd expense_tracker && flutter build ios
 
   #     - name: "Upload iOS Artifact (Optional)"
-  #       uses: actions/upload-artifact@v3 
+  #       uses: actions/upload-artifact@v3
   #       with:
-  #         name: ios-app 
-  #         path: expense_tracker/build/ios/archive 
+  #         name: ios-app
+  #         path: expense_tracker/build/ios/archive
