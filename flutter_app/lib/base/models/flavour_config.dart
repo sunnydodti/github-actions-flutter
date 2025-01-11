@@ -12,7 +12,7 @@ class FlavorConfig {
 
   factory FlavorConfig({
     required Flavor flavor,
-    Color color: Colors.blue,
+    Color color = Colors.blue,
     required FlavorValues values,
   }) {
     _instance ??= FlavorConfig._internal(flavor, flavor.name, color, values);
