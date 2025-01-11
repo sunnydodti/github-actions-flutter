@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/ui/base/device_info_dialog.dart';
 
+import '../../models/base/build_config.dart';
 import '../../models/base/flavour_config.dart';
 
 
@@ -25,24 +27,27 @@ class FlavorBanner extends StatelessWidget {
   }
 
   Widget _buildBanner(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      height: 50,
-      child: CustomPaint(
-        painter: BannerPainter(
-            message: bannerConfig!.bannerName,
-            textDirection: Directionality.of(context),
-            layoutDirection: Directionality.of(context),
-            location: BannerLocation.topStart,
-            color: bannerConfig!.bannerColor),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      child: SizedBox(
+        width: 50,
+        height: 50,
+        child: CustomPaint(
+          painter: BannerPainter(
+              message: bannerConfig!.bannerName,
+              textDirection: Directionality.of(context),
+              layoutDirection: Directionality.of(context),
+              location: BannerLocation.topStart,
+              color: bannerConfig!.bannerColor),
+        ),
       ),
+      onLongPress: () => _showDeviceInfo(context),
+      onTap: () => _showDeviceInfo(context),
     );
   }
-}
 
-class BannerConfig {
-  final String bannerName;
-  final Color bannerColor;
-
-  BannerConfig({required this.bannerName, required this.bannerColor});
+  Future<dynamic> _showDeviceInfo(BuildContext context) {
+    return showDialog(
+        context: context, builder: (context) => const DeviceInfoDialog());
+  }
 }
