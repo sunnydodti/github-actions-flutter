@@ -90,7 +90,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
-          tag: "v${{ needs.build-info.outputs.app-version}}+${{github.run_number}}.${{ github.run_attempt }}"
+          tag: "v${{ needs.build-info.outputs.app-version}}-dev+${{github.run_number}}.${{ github.run_attempt }}"
           token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: true
 
