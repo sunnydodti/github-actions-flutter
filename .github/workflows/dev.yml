@@ -10,6 +10,7 @@ jobs:
     outputs:
       app-version: ${{ steps.get_version.outputs.app_version }}
       pkg-name: ${{ steps.get_version.outputs.pkg_name }}
+      tag-name: ${{ steps.get_tag.outputs.tag_name }}
 
     steps:
       - name: "Clone repository"
@@ -30,6 +31,16 @@ jobs:
         run: |
           PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2).dev"
           echo "pkg_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+
+      - name: "Get Tag Name"
+        id: get_tag
+        run: |
+          if [[ ${{github.ref_name == 'main' }} ]]; then
+            PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)"
+          else
+            PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2).dev"
+          fi
+          echo "tag_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
 
       - name: "Read Version"
         id: get_version
@@ -58,6 +69,9 @@ jobs:
         run: |
           echo "== build details =="
           echo "build: ${{ github.ref_name }}"
+          echo "app version: ${{ needs.app-info.outputs.app-version }}"
+          echo "package name: ${{ needs.app-info.outputs.pkg-name }}"
+          echo "tag name: ${{ needs.app-info.outputs.tag-name }}"
 
       - name: "Pub Get"
         run: cd flutter_app && flutter pub get
@@ -74,12 +88,11 @@ jobs:
 
       - name: "Release"
         uses: ncipollo/release-action@v1
-        if: ${{ github.ref_name == 'main'}}
         with:
           artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
           tag: "v${{ needs.app-info.outputs.app-version }} $(date '+%Y-%m-%d_%H:%M:%S')"
           token: ${{ secrets.RELEASE_TOKEN }}
-          prerelease: false
+          prerelease: true
 
   # build_ios:
   #   runs-on: macos-latest
