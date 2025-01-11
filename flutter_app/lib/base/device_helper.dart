@@ -1,6 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 
-import '../../enums/base/build_mode.dart';
+import 'enums.dart';
 
 class DeviceHelper {
   static BuildMode currentBuildMode() {

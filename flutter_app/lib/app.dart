@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'models/base/flavour_config.dart';
-import 'ui/base/flavour_banner.dart';
+import 'base/models/flavour_config.dart';
+import 'base/widgets/flavour_banner.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

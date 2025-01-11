@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/ui/base/device_info_dialog.dart';
+import 'package:flutter_app/base/widgets/device_info_dialog.dart';
 
-import '../../models/base/build_config.dart';
-import '../../models/base/flavour_config.dart';
-
+import '../../base/models/build_config.dart';
+import '../models/flavour_config.dart';
 
 class FlavorBanner extends StatelessWidget {
   final Widget child;

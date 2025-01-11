@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../enums/base/flavour.dart';
+import '../enums.dart';
 import 'flavour_values.dart';
 
 class FlavorConfig {
