@@ -49,12 +49,6 @@ jobs:
           APP_VERSION="$(yq -r '.version' 'flutter_app/pubspec.yaml')-dev"
           echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
 
-      - name: "Read Version"
-        id: date
-        run: |
-          DATE="$(date '+%Y-%m-%d_%H:%M:%S')"
-          echo "date=$DATE" >> $GITHUB_OUTPUT
-
   build-android:
     if: ${{ github.ref_name == 'dev' }}
     needs: build-info
@@ -97,7 +91,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
-          tag: "v${{ needs.build-info.outputs.date }} $(date '+%Y-%m-%d_%H:%M:%S')"
+          tag: "v${{ needs.build-info.outputs.date }}+${{github.run_number}}.${{ github.run_attempt }}"
           token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: true
 
