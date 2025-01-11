@@ -81,7 +81,7 @@ class DeviceInfoDialog extends StatelessWidget {
         });
   }
 
-  Widget _buildTile(String key, String value) {
+  Widget _buildTile(String key, String? value) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(
@@ -93,7 +93,7 @@ class DeviceInfoDialog extends StatelessWidget {
           const SizedBox(
             width: 5,
           ),
-          Text(value)
+          Text(value ?? "")
         ],
       ),
     );
