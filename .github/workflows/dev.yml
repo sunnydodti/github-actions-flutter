@@ -28,7 +28,7 @@ jobs:
       - name: "Get Package Name"
         id: get_package
         run: |
-          PACKAGE_NAME="$(grep -o 'package=\"[^\"]*\"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '\"' -f 2).dev"
+          PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2).dev"
           echo "pkg_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
 
       - name: "Read Version"
