@@ -5,12 +5,13 @@ on:
       - dev
 
 jobs:
-  app-info:
+  build-info:
     runs-on: ubuntu-latest
     outputs:
       app-version: ${{ steps.get_version.outputs.app_version }}
       pkg-name: ${{ steps.get_version.outputs.pkg_name }}
       tag-name: ${{ steps.get_tag.outputs.tag_name }}
+      date: ${{ steps.date.outputs.date }}
 
     steps:
       - name: "Clone repository"
@@ -48,9 +49,15 @@ jobs:
           APP_VERSION="$(yq -r '.version' 'flutter_app/pubspec.yaml')-dev"
           echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
 
+      - name: "Read Version"
+        id: date
+        run: |
+          DATE="$(date '+%Y-%m-%d_%H:%M:%S')"
+          echo "date=$DATE" >> $GITHUB_OUTPUT
+
   build-android:
     if: ${{ github.ref_name == 'dev' }}
-    needs: app-info
+    needs: build-info
     runs-on: ubuntu-latest
 
     steps:
@@ -69,9 +76,9 @@ jobs:
         run: |
           echo "== build details =="
           echo "build: ${{ github.ref_name }}"
-          echo "app version: ${{ needs.app-info.outputs.app-version }}"
-          echo "package name: ${{ needs.app-info.outputs.pkg-name }}"
-          echo "tag name: ${{ needs.app-info.outputs.tag-name }}"
+          echo "app version: ${{ needs.build-info.outputs.app-version }}"
+          echo "package name: ${{ needs.build-info.outputs.pkg-name }}"
+          echo "tag name: ${{ needs.build-info.outputs.tag-name }}"
 
       - name: "Pub Get"
         run: cd flutter_app && flutter pub get
@@ -82,15 +89,15 @@ jobs:
       - run: ls flutter_app/build/app/outputs/flutter-apk/*.apk
       - name: Rename Outputs
         run: |
-          mv flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-dev-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.app-info.outputs.app-version }}_arm64-v8a-release.apk"
-          mv flutter_app/build/app/outputs/flutter-apk/app-armeabi-v7a-dev-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.app-info.outputs.app-version }}_armeabi-v7a-release.apk"
-          mv flutter_app/build/app/outputs/flutter-apk/app-x86_64-dev-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.app-info.outputs.app-version }}_x86_64-release.apk"
+          mv flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-dev-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_arm64-v8a-release.apk"
+          mv flutter_app/build/app/outputs/flutter-apk/app-armeabi-v7a-dev-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_armeabi-v7a-release.apk"
+          mv flutter_app/build/app/outputs/flutter-apk/app-x86_64-dev-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_x86_64-release.apk"
 
       - name: "Release"
         uses: ncipollo/release-action@v1
         with:
           artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
-          tag: "v${{ needs.app-info.outputs.app-version }} $(date '+%Y-%m-%d_%H:%M:%S')"
+          tag: "v${{ needs.build-info.outputs.date }} $(date '+%Y-%m-%d_%H:%M:%S')"
           token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: true
 
