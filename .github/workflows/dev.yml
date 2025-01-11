@@ -9,9 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       app-version: ${{ steps.get_version.outputs.app_version }}
-      pkg-name: ${{ steps.get_version.outputs.pkg_name }}
-      tag-name: ${{ steps.get_tag.outputs.tag_name }}
-      date: ${{ steps.date.outputs.date }}
+      pkg-name: ${{ steps.get_package.outputs.pkg_name }}
+      tag-name: ${{ steps.get_version.outputs.get_version }}
 
     steps:
       - name: "Clone repository"
