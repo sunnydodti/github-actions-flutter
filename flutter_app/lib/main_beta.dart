@@ -7,8 +7,8 @@ import 'base/models/flavour_values.dart';
 
 void main() {
   FlavorConfig(
-      flavor: Flavor.DEV,
-      color: Colors.blue,
-      values: FlavorValues(baseUrl: "https://sunnydodti.com/dev"));
+      flavor: Flavor.BETA,
+      color: Colors.lightGreenAccent,
+      values: FlavorValues(baseUrl: "https://sunnydodti.com/beta"));
   runApp(const App());
 }

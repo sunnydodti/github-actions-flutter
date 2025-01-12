@@ -12,7 +12,7 @@ class FlavorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (FlavorConfig.isPRODUCTION()) return child;
+    if (!FlavorConfig.displayBanner()) return child;
     bannerConfig ??= _getDefaultBanner();
     return Stack(
       children: <Widget>[child, _buildBanner(context)],

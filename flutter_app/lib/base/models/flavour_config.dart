@@ -27,7 +27,20 @@ class FlavorConfig {
 
   static bool isPRODUCTION() => _instance!.flavor == Flavor.PRD;
 
-  static bool isBETA() => _instance!.flavor == Flavor.STG;
+  static bool isBETA() => _instance!.flavor == Flavor.BETA;
 
-  static bool isALPHA() => _instance!.flavor == Flavor.DEV;
+  static bool isALPHA() => _instance!.flavor == Flavor.ALPHA;
+
+  static bool isSTG() => _instance!.flavor == Flavor.STG;
+
+  static bool isDEV() => _instance!.flavor == Flavor.DEV;
+
+  static bool displayBanner() {
+    if (isPRODUCTION()) return false;
+    return true;
+  }
+
+  static bool isPreRelease() {
+    return (isBETA() || isALPHA());
+  }
 }

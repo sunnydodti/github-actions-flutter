@@ -1,30 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'base/models/flavour_config.dart';
-import 'base/widgets/flavour_banner.dart';
+import 'pages/home_page.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Ready to Go',
       home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FlavorBanner(
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Flutter Ready to Go')),
-        body: Center(child: Text("Flavor: ${FlavorConfig.instance.name}")),
-      ),
     );
   }
 }

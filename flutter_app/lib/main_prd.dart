@@ -9,8 +9,6 @@ void main() {
   FlavorConfig(
       flavor: Flavor.PRD,
       color: Colors.transparent,
-      values: FlavorValues(
-          baseUrl:
-              "https://raw.githubusercontent.com/JHBitencourt/ready_to_go/master/lib/json/person_production.json"));
-  runApp(const MyApp());
+      values: FlavorValues(baseUrl: "https://sunnydodti.com/prd"));
+  runApp(const App());
 }
