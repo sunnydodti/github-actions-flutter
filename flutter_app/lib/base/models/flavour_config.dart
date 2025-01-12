@@ -37,6 +37,7 @@ class FlavorConfig {
 
   static bool displayBanner() {
     if (isPRODUCTION()) return false;
+    if (isPreRelease()) return false;
     return true;
   }
 
