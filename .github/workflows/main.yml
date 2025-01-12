@@ -2,9 +2,7 @@ name: "Flutter CI"
 on:
   push:
     branches:
-      - main
-      - beta
-      - alpha
+      - do-not-run
 
 jobs:
   update-build-info:
