@@ -61,6 +61,12 @@ jobs:
           channel: stable
           flutter-version-file: flutter_app/pubspec.yaml
 
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
       - name: Build Details
         run: |
           echo "== build details =="
