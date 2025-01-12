@@ -1,11 +1,12 @@
 name: flutter_app
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.0
+  sdk: 3.6.0
+  flutter: 3.27.1
 
 dependencies:
   cupertino_icons: ^1.0.8
@@ -23,7 +24,6 @@ flutter:
   uses-material-design: true
 
 flavorizr:
-
   flavors:
     alpha:
       app:
@@ -32,7 +32,7 @@ flavorizr:
       android:
         applicationId: "com.example.flutter_app"
         customConfig:
-          versionNameSuffix: "\"-alpha\""
+          versionNameSuffix: '"-alpha"'
       ios:
         bundleId: "com.example.flutter_app"
 
@@ -43,7 +43,7 @@ flavorizr:
       android:
         applicationId: "com.example.flutter_app"
         customConfig:
-          versionNameSuffix: "\"-beta\""
+          versionNameSuffix: '"-beta"'
       ios:
         bundleId: "com.example.flutter_app"
 
@@ -63,7 +63,7 @@ flavorizr:
       android:
         applicationId: "com.example.flutter_app-stg"
         customConfig:
-          versionNameSuffix: "\"-stg\""
+          versionNameSuffix: '"-stg"'
       ios:
         bundleId: "com.example.flutter_app.stg"
     dev:
@@ -73,6 +73,6 @@ flavorizr:
       android:
         applicationId: "com.example.flutter_app.dev"
         customConfig:
-          versionNameSuffix: "\"-dev\""
+          versionNameSuffix: '"-dev"'
       ios:
         bundleId: "com.example.flutter_app.dev"
