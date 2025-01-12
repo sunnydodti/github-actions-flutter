@@ -1,0 +1,97 @@
+name: "PRD CI"
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-info:
+    runs-on: ubuntu-latest
+    outputs:
+      app-version: ${{ steps.get_version.outputs.app_version }}
+      pkg-name: ${{ steps.get_package.outputs.pkg_name }}
+      tag-name: ${{ steps.get_tag.outputs.tag_name }}
+
+    steps:
+      - name: "Clone repository"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: "Checkout build-info repo"
+        uses: actions/checkout@v4
+        with:
+          repository: sunnydodti/build-info
+          token: ${{ secrets.BUILD_INFO_TOKEN }}
+          path: build-info
+          ref: main
+
+      - name: "Get Package Name"
+        id: get_package
+        run: |
+          PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)"
+          echo "pkg_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+
+      - name: "Get Tag Name"
+        id: get_tag
+        run: |
+          PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)"
+          echo "tag_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+
+      - name: "Read Version"
+        id: get_version
+        run: |
+          APP_VERSION="$(yq -r '.version' 'flutter_app/pubspec.yaml')"
+          echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+
+  build-android:
+    if: ${{ github.ref_name == 'main' }}
+    needs: build-info
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Clone repository"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
+      - name: "Set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: flutter_app/pubspec.yaml
+
+      - name: Build Details
+        run: |
+          echo "== build details =="
+          echo "build: ${{ github.ref_name }}"
+          echo "app version: ${{ needs.build-info.outputs.app-version }}"
+          echo "package name: ${{ needs.build-info.outputs.pkg-name }}"
+          echo "tag name: ${{ needs.build-info.outputs.tag-name }}"
+
+      - name: "Pub Get"
+        run: cd flutter_app && flutter pub get
+
+      - name: "Build Apk for prd"
+        run: cd flutter_app && flutter build apk --flavor prd -t lib/main_prd.dart --split-per-abi
+
+      - run: ls flutter_app/build/app/outputs/flutter-apk/*.apk
+      - name: Rename Outputs
+        run: |
+          mv flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-prd-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_arm64-v8a-release.apk"
+          mv flutter_app/build/app/outputs/flutter-apk/app-armeabi-v7a-prd-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_armeabi-v7a-release.apk"
+          mv flutter_app/build/app/outputs/flutter-apk/app-x86_64-prd-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_x86_64-release.apk"
+
+      - name: "Release"
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
+          tag: "v${{ needs.build-info.outputs.app-version}}+${{github.run_number}}.${{ github.run_attempt }}"
+          token: ${{ secrets.RELEASE_TOKEN }}
+          prerelease: true
