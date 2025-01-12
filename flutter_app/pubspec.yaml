@@ -15,8 +15,64 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^5.0.0
+  flutter_flavorizr: ^2.2.3
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
+
+flavorizr:
+
+  flavors:
+    alpha:
+      app:
+        name: "flutter_app_alpha"
+
+      android:
+        applicationId: "com.example.flutter_app"
+        customConfig:
+          versionNameSuffix: "\"-alpha\""
+      ios:
+        bundleId: "com.example.flutter_app"
+
+    beta:
+      app:
+        name: "flutter_app_beta"
+
+      android:
+        applicationId: "com.example.flutter_app"
+        customConfig:
+          versionNameSuffix: "\"-beta\""
+      ios:
+        bundleId: "com.example.flutter_app"
+
+    prd:
+      app:
+        name: "flutter_app"
+
+      android:
+        applicationId: "com.example.flutter_app"
+      ios:
+        bundleId: "com.example.flutter_app"
+
+    stg:
+      app:
+        name: "flutter_app_stg"
+
+      android:
+        applicationId: "com.example.flutter_app-stg"
+        customConfig:
+          versionNameSuffix: "\"-stg\""
+      ios:
+        bundleId: "com.example.flutter_app.stg"
+    dev:
+      app:
+        name: "flutter_app_dev"
+
+      android:
+        applicationId: "com.example.flutter_app.dev"
+        customConfig:
+          versionNameSuffix: "\"-dev\""
+      ios:
+        bundleId: "com.example.flutter_app.dev"
