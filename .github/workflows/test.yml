@@ -46,9 +46,12 @@ jobs:
 
       - run: "cd android/sdk && wget --output-document=android-sdk.zip --quiet https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
       - run: "cd android/sdk && unzip android-sdk.zip && rm -f android-sdk.zip"
+      - run: "tree"
       - run: "export PATH=$PATH:/android/sdk/cmdline-tools/bin"
+      - run: echo "PATH=$PATH" >> $GITHUB_ENV
       - run: "yes | sdkmanager --licenses --sdk_root=android/sdk"
       - run: 'sdkmanager "build-tools;35.0.0" --sdk_root=android/sdk'
       - run: "tree"
       - run: "export PATH=$PATH:/android/sdk/build-tools/35.0.0"
+      - run: echo "PATH=$PATH" >> $GITHUB_ENV
       - run: "apksigner -h"
