@@ -50,7 +50,7 @@ jobs:
       - run: echo CMD_TOOLS="/android/sdk/cmdline-tools/bin" >> $GITHUB_ENV
       - run: echo "$CMD_TOOLS"
       - run: ls
-      - run: yes | $CMD_TOOLS/sdkmanager --licenses --sdk_root=android/sdk
+      - run: cd $CMD_TOOLS && yes | ./sdkmanager --licenses --sdk_root=android/sdk
       - run: '$CMD_TOOLS/sdkmanager "build-tools;35.0.0" --sdk_root=android/sdk'
       - run: "tree"
       - run: echo BUILD_TOOLS="/android/sdk/build-tools/35.0.0" >> $GITHUB_ENV
