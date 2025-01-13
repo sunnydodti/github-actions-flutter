@@ -39,17 +39,15 @@ jobs:
         id: check-keytol
         run: |
           keytool -h
-      
+
       - name: "create android sdk dir"
         run: |
           mkdir -p android/sdk
 
-
       - run: "cd android/sdk && wget --output-document=android-sdk.zip --quiet https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
       - run: "cd android/sdk && unzip android-sdk.zip && rm -f android-sdk.zip"
-      - run: "tree"
       - run: "yes | android/sdk/cmdline-tools/bin/sdkmanager --licenses --sdk_root=android/sdk"
-
-
-
-
+      - run: 'android/sdk/cmdline-tools/bin/sdkmanager sdkmanager "build-tools;35.0.0" --sdk_root=android/sdk'
+      - run: "tree"
+      - run: "export PATH=$PATH:/android/sdk/build-tools/35.0.0"
+      - run: "apksigner -h"
