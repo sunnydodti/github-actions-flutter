@@ -55,12 +55,6 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: 17
-          distribution: "temurin"
-
       - name: "Set up Flutter"
         uses: subosito/flutter-action@v2
         with:
@@ -80,6 +74,10 @@ jobs:
 
       - name: "Build Apk for dev"
         run: cd flutter_app && flutter build apk --flavor dev -t lib/main_dev.dart --split-per-abi
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
 
       - run: ls flutter_app/build/app/outputs/flutter-apk/*.apk
       - name: Rename Outputs
