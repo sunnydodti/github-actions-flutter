@@ -34,37 +34,37 @@ jobs:
           chmod +x workflows/scripts/test.sh
           workflows/scripts/test.sh
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: 17
-          distribution: "temurin"
+      # - name: Set up Java
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     java-version: 17
+      #     distribution: "temurin"
 
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > keystore.jks
+      # - name: Decode Keystore
+      #   run: |
+      #     echo "${{ secrets.KEYSTORE }}" | base64 --decode > keystore.jks
 
-      - name: Tree
-        run: |
-          tree
+      # - name: Tree
+      #   run: |
+      #     tree
 
-      - name: "Check Keytool"
-        id: check-keytol
-        run: |
-          keytool -h
+      # - name: "Check Keytool"
+      #   id: check-keytol
+      #   run: |
+      #     keytool -h
 
-      - name: "create android sdk dir"
-        run: |
-          mkdir -p android/sdk
+      # - name: "create android sdk dir"
+      #   run: |
+      #     mkdir -p android/sdk
 
-      - run: "cd android/sdk && wget --output-document=android-sdk.zip --quiet https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-      - run: "cd android/sdk && unzip android-sdk.zip && rm -f android-sdk.zip"
-      - run: "tree"
-      - run: echo CMD_TOOLS="android/sdk/cmdline-tools/bin" >> $GITHUB_ENV
-      - run: echo "$CMD_TOOLS"
-      - run: ls
-      - run: cd $CMD_TOOLS && yes | ./sdkmanager --licenses --sdk_root=android/sdk
-      - run: 'yes | $CMD_TOOLS/sdkmanager "build-tools;35.0.0" --sdk_root=android/sdk'
-      - run: "tree"
-      - run: echo BUILD_TOOLS="android/sdk/build-tools/35.0.0" >> $GITHUB_ENV
-      - run: "$BUILD_TOOLS/apksigner -h"
+      # - run: "cd android/sdk && wget --output-document=android-sdk.zip --quiet https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+      # - run: "cd android/sdk && unzip android-sdk.zip && rm -f android-sdk.zip"
+      # - run: "tree"
+      # - run: echo CMD_TOOLS="android/sdk/cmdline-tools/bin" >> $GITHUB_ENV
+      # - run: echo "$CMD_TOOLS"
+      # - run: ls
+      # - run: cd $CMD_TOOLS && yes | ./sdkmanager --licenses --sdk_root=android/sdk
+      # - run: 'yes | $CMD_TOOLS/sdkmanager "build-tools;35.0.0" --sdk_root=android/sdk'
+      # - run: "tree"
+      # - run: echo BUILD_TOOLS="android/sdk/build-tools/35.0.0" >> $GITHUB_ENV
+      # - run: "$BUILD_TOOLS/apksigner -h"
