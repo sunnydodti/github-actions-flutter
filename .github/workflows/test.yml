@@ -40,11 +40,10 @@ jobs:
           chmod +x workflows/scripts/setup-android-sdk.sh
           workflows/scripts/setup-android-sdk.sh
 
-      # - name: "run test script"
-      #   run: |
-      #     chmod +x workflows/scripts/test.sh
-      #     workflows/scripts/test.sh
-
+      - name: "decode keystore"
+        run: |
+          chmod +x workflows/scripts/decode-keystore.sh
+          workflows/scripts/decode-keystore.sh
 
       # - name: Decode Keystore
       #   run: |
