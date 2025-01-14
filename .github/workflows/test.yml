@@ -31,6 +31,7 @@ jobs:
 
       - name: "setup android sdk"
         run: |
+          chmod +x workflows/scripts/setup-android-sdk.sh
           workflows/scripts/setup-android-sdk.sh
 
       # - name: "run test script"
