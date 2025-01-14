@@ -45,6 +45,7 @@ jobs:
           chmod +x workflows/scripts/decode-keystore.sh
           workflows/scripts/decode-keystore.sh
 
+      - run: tree
       # - name: Decode Keystore
       #   run: |
       #     echo "${{ secrets.KEYSTORE }}" | base64 --decode > keystore.jks
