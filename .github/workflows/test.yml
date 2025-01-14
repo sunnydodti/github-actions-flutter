@@ -29,6 +29,12 @@ jobs:
           path: workflows
           ref: main
 
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
       - name: "setup android sdk"
         run: |
           chmod +x workflows/scripts/setup-android-sdk.sh
@@ -39,11 +45,6 @@ jobs:
       #     chmod +x workflows/scripts/test.sh
       #     workflows/scripts/test.sh
 
-      # - name: Set up Java
-      #   uses: actions/setup-java@v2
-      #   with:
-      #     java-version: 17
-      #     distribution: "temurin"
 
       # - name: Decode Keystore
       #   run: |
