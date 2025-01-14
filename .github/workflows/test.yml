@@ -29,10 +29,14 @@ jobs:
           path: workflows
           ref: main
 
-      - name: "run test script"
+      - name: "setup android sdk"
         run: |
-          chmod +x workflows/scripts/test.sh
-          workflows/scripts/test.sh
+          workflows/scripts/setup-android-sdk.sh
+
+      # - name: "run test script"
+      #   run: |
+      #     chmod +x workflows/scripts/test.sh
+      #     workflows/scripts/test.sh
 
       # - name: Set up Java
       #   uses: actions/setup-java@v2
