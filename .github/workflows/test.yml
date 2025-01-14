@@ -30,7 +30,7 @@ jobs:
           ref: main
 
       - name: "run test script"
-        run: bash workflows/scripts/setup-android-sdk.sh
+        run: bash workflows/scripts/test.sh
 
       - name: Set up Java
         uses: actions/setup-java@v2
