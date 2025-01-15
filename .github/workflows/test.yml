@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       app-version: ${{ steps.get_version.outputs.app_version }}
+    env:
+      FLUTTER_ROOT: flutter_app
 
     steps:
       - name: "Clone repository"
@@ -28,7 +30,7 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          workflows/scripts/android/get-app-version.sh
+          workflows/scripts/android/get-app-version.sh ${{ vars.FLUTTER_ROOT }}
           echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
 
   build-android:
@@ -63,7 +65,7 @@ jobs:
       - name: "setup android sdk"
         run: |
           chmod +x workflows/scripts/android/setup-android-sdk.sh
-          workflows/scripts/android/setup-android-sdk.sh
+          workflows/scripts/android/setup-android-sdk.sh 
 
       - name: "decode keystore"
         run: |
