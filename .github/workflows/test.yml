@@ -27,8 +27,8 @@ jobs:
       - name: "Get App Version"
         id: get_version
         run: |
-          chmod +x workflows/android/get-package-name.sh
-          workflows/android/get-package-name.sh
+          chmod +x workflows/android/get-app-version.sh
+          workflows/android/get-app-version.sh
           echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
 
   build-android:
@@ -86,4 +86,3 @@ jobs:
         run: |
           chmod +x workflows/scripts/android/rename-apk.sh
           workflows/scripts/android/rename-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}" "${{ needs.build-info.outputs.app-version }}"
-
