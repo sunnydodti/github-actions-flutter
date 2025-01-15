@@ -8,7 +8,7 @@ jobs:
   build-info:
     runs-on: ubuntu-latest
     outputs:
-      app-version: ${{ steps.get_version.outputs.app_version }}
+      app-version: ${{ steps.set_version.outputs.app_version }}
     env:
       FLUTTER_ROOT: flutter_app
 
@@ -30,8 +30,7 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          'bash workflows/scripts/android/get-app-version.sh ${{ vars.FLUTTER_ROOT }}'
-          echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
+          bash workflows/scripts/android/get-app-version.sh flutter_app
 
       - name: "Set App Version"
         id: "set_version"
