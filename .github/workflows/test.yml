@@ -10,7 +10,7 @@ jobs:
     outputs:
       app-version: ${{ steps.set_version.outputs.app_version }}
     env:
-      FLUTTER_ROOT: flutter_app
+      FLUTTER_ROOT: "flutter_app"
 
     steps:
       - name: "Clone repository"
@@ -30,7 +30,7 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          workflows/scripts/android/get-app-version.sh flutter_app
+          workflows/scripts/android/get-app-version.sh $FLUTTER_ROOT
 
       - name: "Set App Version"
         id: "set_version"
