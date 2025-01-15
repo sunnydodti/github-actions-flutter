@@ -30,7 +30,7 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          workflows/scripts/android/get-app-version.sh ${{ vars.FLUTTER_ROOT }}
+          'workflows/scripts/android/get-app-version.sh ${{ vars.FLUTTER_ROOT }}'
           echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
 
   build-android:
@@ -65,7 +65,7 @@ jobs:
       - name: "setup android sdk"
         run: |
           chmod +x workflows/scripts/android/setup-android-sdk.sh
-          workflows/scripts/android/setup-android-sdk.sh 
+          workflows/scripts/android/setup-android-sdk.sh
 
       - name: "decode keystore"
         run: |
@@ -77,14 +77,14 @@ jobs:
       - name: "build apk"
         run: |
           chmod +x workflows/scripts/android/build-apk.sh
-          workflows/scripts/android/build-apk.sh "${{ vars.FLUTTER_ROOT }}" "${{ vars.FLAVOUR }}" "${{vars.MAIN_FILE}}"
+          'workflows/scripts/android/build-apk.sh "${{ vars.FLUTTER_ROOT }}" "${{ vars.FLAVOUR }}" "${{vars.MAIN_FILE}}"'
 
       - name: "sign apk"
         run: |
           chmod +x workflows/scripts/android/sign-apk.sh
-          workflows/scripts/android/sign-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}"
+          'workflows/scripts/android/sign-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}"'
 
       - name: "rename apk"
         run: |
           chmod +x workflows/scripts/android/rename-apk.sh
-          workflows/scripts/android/rename-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}" "${{ needs.build-info.outputs.app-version }}"
+          'workflows/scripts/android/rename-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}" "${{ needs.build-info.outputs.app-version }}"'
