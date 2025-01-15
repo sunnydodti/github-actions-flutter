@@ -34,7 +34,7 @@ jobs:
 
       - name: "Set App Version"
         id: "set_version"
-        run: echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
+        run: echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
 
   build-android:
     if: ${{ github.ref_name == 'test' }}
@@ -69,7 +69,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: '"$FLUTTER_ROOT"/pubspec.yaml'
+          flutter-version-file: "$FLUTTER_ROOT/pubspec.yaml"
 
       - run: tree
       - name: "setup android sdk"
