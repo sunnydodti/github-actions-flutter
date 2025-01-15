@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FLAVOUR: dev
-      MAIN_FILE: main-dev.dert
+      MAIN_FILE: main_dev.dart
       FLUTTER_ROOT: flutter_app
 
     steps:
@@ -80,14 +80,14 @@ jobs:
       - name: "build apk"
         run: |
           chmod +x workflows/scripts/android/build-apk.sh
-          'workflows/scripts/android/build-apk.sh "${{ vars.FLUTTER_ROOT }}" "${{ vars.FLAVOUR }}" "${{vars.MAIN_FILE}}"'
+          'workflows/scripts/android/build-apk.sh "$FLUTTER_ROOT" "$FLAVOUR" "$MAIN_FILE"'
 
       - name: "sign apk"
         run: |
           chmod +x workflows/scripts/android/sign-apk.sh
-          'workflows/scripts/android/sign-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}"'
+          'workflows/scripts/android/sign-apk.sh "$FLUTTER_ROOT" "-$FLAVOUR"'
 
       - name: "rename apk"
         run: |
           chmod +x workflows/scripts/android/rename-apk.sh
-          'workflows/scripts/android/rename-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}" "${{ needs.build-info.outputs.app-version }}"'
+          'workflows/scripts/android/rename-apk.sh "$FLUTTER_ROOT" "-$FLAVOUR" "${{ needs.build-info.outputs.app-version }}"'
