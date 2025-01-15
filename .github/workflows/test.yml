@@ -30,8 +30,12 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          'workflows/scripts/android/get-app-version.sh'
+          'bash workflows/scripts/android/get-app-version.sh ${{ vars.FLUTTER_ROOT }}'
           echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
+
+      - name: "Set App Version"
+        id: "set_version"
+        run: echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
 
   build-android:
     if: ${{ github.ref_name == 'test' }}
