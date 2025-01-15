@@ -23,12 +23,12 @@ jobs:
           token: ${{ secrets.BUILD_INFO_TOKEN }}
           path: workflows
           ref: main
-
+      - run: tree
       - name: "Get App Version"
         id: get_version
         run: |
-          chmod +x workflows/android/get-app-version.sh
-          workflows/android/get-app-version.sh
+          chmod +x workflows/scripts/android/get-app-version.sh
+          workflows/scripts/android/get-app-version.sh
           echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
 
   build-android:
@@ -59,7 +59,7 @@ jobs:
         with:
           java-version: 17
           distribution: "temurin"
-
+      - run: tree
       - name: "setup android sdk"
         run: |
           chmod +x workflows/scripts/android/setup-android-sdk.sh
