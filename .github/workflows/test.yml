@@ -30,7 +30,7 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          bash workflows/scripts/android/get-app-version.sh flutter_app
+          workflows/scripts/android/get-app-version.sh flutter_app
 
       - name: "Set App Version"
         id: "set_version"
