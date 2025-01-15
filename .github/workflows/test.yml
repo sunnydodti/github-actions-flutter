@@ -7,19 +7,44 @@ on:
 jobs:
   build-info:
     runs-on: ubuntu-latest
+    outputs:
+      app-version: ${{ steps.get_version.outputs.app_version }}
+
     steps:
       - name: "Clone repository"
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
 
-      - name: "Checkout build-info repo"
+      - name: "Checkout workflows repo"
         uses: actions/checkout@v4
         with:
-          repository: sunnydodti/build-info
+          repository: sunnydodti/workflows
           token: ${{ secrets.BUILD_INFO_TOKEN }}
-          path: build-info
+          path: workflows
           ref: main
+
+      - name: "Get App Version"
+        id: get_version
+        run: |
+          chmod +x workflows/android/get-package-name.sh
+          workflows/android/get-package-name.sh
+          echo "app_version=${{ vars.APP_VERSION }}" >> $GITHUB_OUTPUT
+
+  build-android:
+    if: ${{ github.ref_name == 'test' }}
+    needs: build-info
+    runs-on: ubuntu-latest
+    env:
+      FLAVOUR: dev
+      MAIN_FILE: main-dev.dert
+      FLUTTER_ROOT: flutter_app
+
+    steps:
+      - name: "Clone repository"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: "Checkout workflows repo"
         uses: actions/checkout@v4
@@ -37,8 +62,8 @@ jobs:
 
       - name: "setup android sdk"
         run: |
-          chmod +x workflows/scripts/setup-android-sdk.sh
-          workflows/scripts/setup-android-sdk.sh
+          chmod +x workflows/scripts/android/setup-android-sdk.sh
+          workflows/scripts/android/setup-android-sdk.sh
 
       - name: "decode keystore"
         run: |
@@ -46,31 +71,19 @@ jobs:
           workflows/scripts/decode-keystore.sh
 
       - run: tree
-      # - name: Decode Keystore
-      #   run: |
-      #     echo "${{ secrets.KEYSTORE }}" | base64 --decode > keystore.jks
 
-      # - name: Tree
-      #   run: |
-      #     tree
+      - name: "build apk"
+        run: |
+          chmod +x workflows/scripts/android/build-apk.sh
+          workflows/scripts/android/build-apk.sh "${{ vars.FLUTTER_ROOT }}" "${{ vars.FLAVOUR }}" "${{vars.MAIN_FILE}}"
 
-      # - name: "Check Keytool"
-      #   id: check-keytol
-      #   run: |
-      #     keytool -h
+      - name: "sign apk"
+        run: |
+          chmod +x workflows/scripts/android/sign-apk.sh
+          workflows/scripts/android/sign-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}"
 
-      # - name: "create android sdk dir"
-      #   run: |
-      #     mkdir -p android/sdk
+      - name: "rename apk"
+        run: |
+          chmod +x workflows/scripts/android/rename-apk.sh
+          workflows/scripts/android/rename-apk.sh "${{ vars.FLUTTER_ROOT }}" "-${{ vars.FLAVOUR }}" "${{ needs.build-info.outputs.app-version }}"
 
-      # - run: "cd android/sdk && wget --output-document=android-sdk.zip --quiet https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-      # - run: "cd android/sdk && unzip android-sdk.zip && rm -f android-sdk.zip"
-      # - run: "tree"
-      # - run: echo CMD_TOOLS="android/sdk/cmdline-tools/bin" >> $GITHUB_ENV
-      # - run: echo "$CMD_TOOLS"
-      # - run: ls
-      # - run: cd $CMD_TOOLS && yes | ./sdkmanager --licenses --sdk_root=android/sdk
-      # - run: 'yes | $CMD_TOOLS/sdkmanager "build-tools;35.0.0" --sdk_root=android/sdk'
-      # - run: "tree"
-      # - run: echo BUILD_TOOLS="android/sdk/build-tools/35.0.0" >> $GITHUB_ENV
-      # - run: "$BUILD_TOOLS/apksigner -h"
