@@ -11,6 +11,7 @@ jobs:
       app-version: ${{ steps.set_version.outputs.app_version }}
     env:
       FLUTTER_BASE: "flutter_app"
+      FLAVOUR: alpha
 
     steps:
       - name: "Clone repository"
@@ -34,7 +35,7 @@ jobs:
 
       - name: "Set App Version"
         id: "set_version"
-        run: echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+        run: echo "app_version=$APP_VERSION-$FLAVOUR" >> $GITHUB_OUTPUT
 
   build-android:
     if: ${{ github.ref_name == 'test' }}
