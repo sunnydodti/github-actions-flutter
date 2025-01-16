@@ -43,7 +43,7 @@ jobs:
     env:
       FLAVOUR: dev
       MAIN_FILE: main_dev.dart
-      FLUTTER_ROOT: flutter_app
+      FLUTTER_ROOT: "flutter_app"
 
     steps:
       - name: "Clone repository"
@@ -98,3 +98,11 @@ jobs:
         run: |
           chmod +x workflows/scripts/android/rename-apk.sh
           workflows/scripts/android/rename-apk.sh "$FLUTTER_ROOT" "-$FLAVOUR" "${{ needs.build-info.outputs.app-version }}"
+
+      - name: "Release"
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
+          tag: "v${{ needs.build-info.outputs.app-version}}+${{github.run_number}}.${{ github.run_attempt }}"
+          token: ${{ secrets.RELEASE_TOKEN }}
+          prerelease: true
