@@ -41,8 +41,8 @@ jobs:
     needs: build-info
     runs-on: ubuntu-latest
     env:
-      FLAVOUR: dev
-      MAIN_FILE: main_dev.dart
+      FLAVOUR: alpha
+      MAIN_FILE: main_alpha.dart
       FLUTTER_BASE: "flutter_app"
 
     steps:
