@@ -8,9 +8,10 @@ jobs:
   build-info:
     runs-on: ubuntu-latest
     outputs:
-      app-version: ${{ steps.get_version.outputs.app_version }}
-      pkg-name: ${{ steps.get_package.outputs.pkg_name }}
-      tag-name: ${{ steps.get_tag.outputs.tag_name }}
+      app-version: ${{ steps.set_version.outputs.app_version }}
+    env:
+      FLUTTER_BASE: "flutter_app"
+      FLAVOUR: alpha
 
     steps:
       - name: "Clone repository"
@@ -18,36 +19,32 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: "Checkout build-info repo"
+      - name: "Checkout workflows repo"
         uses: actions/checkout@v4
         with:
-          repository: sunnydodti/build-info
+          repository: sunnydodti/workflows
           token: ${{ secrets.BUILD_INFO_TOKEN }}
-          path: build-info
+          path: workflows
           ref: main
-
-      - name: "Get Package Name"
-        id: get_package
-        run: |
-          PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2)"
-          echo "pkg_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
-
-      - name: "Get Tag Name"
-        id: get_tag
-        run: |
-          PACKAGE_NAME="$(grep -o 'package="[^"]*"' flutter_app/android/app/src/main/AndroidManifest.xml | cut -d '"' -f 2).alpha"
-          echo "tag_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
-
-      - name: "Read Version"
+      - run: tree
+      - name: "Get App Version"
         id: get_version
         run: |
-          APP_VERSION="$(yq -r '.version' 'flutter_app/pubspec.yaml')-alpha"
-          echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+          chmod +x workflows/scripts/android/get-app-version.sh
+          workflows/scripts/android/get-app-version.sh "$FLUTTER_BASE"
+
+      - name: "Set App Version"
+        id: "set_version"
+        run: echo "app_version=$APP_VERSION-$FLAVOUR" >> $GITHUB_OUTPUT
 
   build-android:
     if: ${{ github.ref_name == 'alpha' }}
     needs: build-info
     runs-on: ubuntu-latest
+    env:
+      FLAVOUR: alpha
+      MAIN_FILE: main_alpha.dart
+      FLUTTER_BASE: "flutter_app"
 
     steps:
       - name: "Clone repository"
@@ -55,11 +52,13 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: "Set up Flutter"
-        uses: subosito/flutter-action@v2
+      - name: "Checkout workflows repo"
+        uses: actions/checkout@v4
         with:
-          channel: stable
-          flutter-version-file: flutter_app/pubspec.yaml
+          repository: sunnydodti/workflows
+          token: ${{ secrets.BUILD_INFO_TOKEN }}
+          path: workflows
+          ref: main
 
       - name: Set up Java
         uses: actions/setup-java@v2
@@ -67,31 +66,44 @@ jobs:
           java-version: 17
           distribution: "temurin"
 
-      - name: Build Details
+      - name: "Set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: ${{ env.FLUTTER_BASE }}/pubspec.yaml
+
+      - run: tree
+      - name: "setup android sdk"
         run: |
-          echo "== build details =="
-          echo "build: ${{ github.ref_name }}"
-          echo "app version: ${{ needs.build-info.outputs.app-version }}"
-          echo "package name: ${{ needs.build-info.outputs.pkg-name }}"
-          echo "tag name: ${{ needs.build-info.outputs.tag-name }}"
+          chmod +x workflows/scripts/android/setup-android-sdk.sh
+          workflows/scripts/android/setup-android-sdk.sh
 
-      - name: "Pub Get"
-        run: cd flutter_app && flutter pub get
-
-      - name: "Build Apk for alpha"
-        run: cd flutter_app && flutter build apk --flavor alpha -t lib/main_alpha.dart --split-per-abi
-
-      - run: ls flutter_app/build/app/outputs/flutter-apk/*.apk
-      - name: Rename Outputs
+      - name: "decode keystore"
         run: |
-          mv flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-alpha-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_arm64-v8a-release.apk"
-          mv flutter_app/build/app/outputs/flutter-apk/app-armeabi-v7a-alpha-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_armeabi-v7a-release.apk"
-          mv flutter_app/build/app/outputs/flutter-apk/app-x86_64-alpha-release.apk "flutter_app/build/app/outputs/flutter-apk/${{ vars.APP_NAME }}_${{ needs.build-info.outputs.app-version }}_x86_64-release.apk"
+          chmod +x workflows/scripts/decode-keystore.sh
+          workflows/scripts/decode-keystore.sh "${{ secrets.KEYSTORE }}"
+
+      - run: tree
+
+      - name: "build apk"
+        run: |
+          chmod +x workflows/scripts/android/build-apk.sh
+          workflows/scripts/android/build-apk.sh "$FLUTTER_BASE" "$FLAVOUR" "$MAIN_FILE"
+
+      - name: "sign apk"
+        run: |
+          chmod +x workflows/scripts/android/sign-apk.sh
+          workflows/scripts/android/sign-apk.sh "$FLUTTER_BASE" "-$FLAVOUR" "${{ secrets.KEYSTORE_PASSWORD }}" "${{ secrets.KEY_ALIAS }}" "${{ secrets.KEY_PASSWORD }}"
+
+      - name: "rename apk"
+        run: |
+          chmod +x workflows/scripts/android/rename-apk.sh
+          workflows/scripts/android/rename-apk.sh "$FLUTTER_BASE" "${{ vars.APP_NAME }}" "-$FLAVOUR" "${{ needs.build-info.outputs.app-version }}"
 
       - name: "Release"
         uses: ncipollo/release-action@v1
         with:
-          artifacts: flutter_app/build/app/outputs/flutter-apk/*.apk
+          artifacts: "$FLUTTER_BASE/build/app/outputs/flutter-apk/*.apk"
           tag: "v${{ needs.build-info.outputs.app-version}}+${{github.run_number}}.${{ github.run_attempt }}"
           token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: true
