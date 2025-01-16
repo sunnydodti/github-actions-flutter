@@ -10,7 +10,7 @@ jobs:
     outputs:
       app-version: ${{ steps.set_version.outputs.app_version }}
     env:
-      FLUTTER_ROOT: "flutter_app"
+      FLUTTER_: "flutter_app"
 
     steps:
       - name: "Clone repository"
@@ -30,7 +30,7 @@ jobs:
         id: get_version
         run: |
           chmod +x workflows/scripts/android/get-app-version.sh
-          workflows/scripts/android/get-app-version.sh "$FLUTTER_ROOT"
+          workflows/scripts/android/get-app-version.sh "$FLUTTER_"
 
       - name: "Set App Version"
         id: "set_version"
@@ -43,7 +43,7 @@ jobs:
     env:
       FLAVOUR: dev
       MAIN_FILE: main_dev.dart
-      FLUTTER_ROOT: "flutter_app"
+      FLUTTER_: "flutter_app"
 
     steps:
       - name: "Clone repository"
@@ -69,7 +69,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: ${{ env.FLUTTER_ROOT }}/pubspec.yaml
+          flutter-version-file: ${{ env.FLUTTER_ }}/pubspec.yaml
 
       - run: tree
       - name: "setup android sdk"
@@ -87,17 +87,17 @@ jobs:
       - name: "build apk"
         run: |
           chmod +x workflows/scripts/android/build-apk.sh
-          workflows/scripts/android/build-apk.sh "$FLUTTER_ROOT" "$FLAVOUR" "$MAIN_FILE"
+          workflows/scripts/android/build-apk.sh "$FLUTTER_" "$FLAVOUR" "$MAIN_FILE"
 
       - name: "sign apk"
         run: |
           chmod +x workflows/scripts/android/sign-apk.sh
-          workflows/scripts/android/sign-apk.sh "$FLUTTER_ROOT" "-$FLAVOUR"
+          workflows/scripts/android/sign-apk.sh "$FLUTTER_" "-$FLAVOUR"
 
       - name: "rename apk"
         run: |
           chmod +x workflows/scripts/android/rename-apk.sh
-          workflows/scripts/android/rename-apk.sh "$FLUTTER_ROOT" "-$FLAVOUR" "${{ needs.build-info.outputs.app-version }}"
+          workflows/scripts/android/rename-apk.sh "$FLUTTER_" "-$FLAVOUR" "${{ needs.build-info.outputs.app-version }}"
 
       - name: "Release"
         uses: ncipollo/release-action@v1
