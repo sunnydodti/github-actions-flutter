@@ -80,7 +80,7 @@ jobs:
       - name: "decode keystore"
         run: |
           chmod +x workflows/scripts/decode-keystore.sh
-          workflows/scripts/decode-keystore.sh
+          workflows/scripts/decode-keystore.sh "${{ secrets.KEYSTORE }}"
 
       - run: tree
 
